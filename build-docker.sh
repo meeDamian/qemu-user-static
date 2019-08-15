@@ -5,9 +5,9 @@ set -xe
 ## This script builds 3 types of Docker images (assuming version `VERSION`):
 #
 #   1. Image containing all qemu binaries. Built in `./containers/latest/`. Tagged with `:latest`, and `:VERSION`.
-#   2. Register image.  Built in `./containers/register/`. Tagged with `:register`, and `:VERSION-register`. 
+#   2. Register image.  Built in `./containers/register/`. Tagged with `:register`, and `:register-VERSION`.
 #   3. A series of images, each bundled with a single guest-architecture qemu binary. Built in `./containers/qemu-ARCH`.
-#      Tagged with `:ARCH`, and `:VERSION-ARCH`. 
+#      Tagged with `:ARCH`, and `:ARCH-VERSION`.
 
 
 # Convert Travis-provided repo SLUG to lowercase - Docker's requirement for tags
@@ -78,19 +78,15 @@ if [[ -n "${TRAVIS_TAG}" ]]; then
   docker push "${SLUG}:${TRAVIS_TAG}"
 
   # Tag `:register` with specific qemu version, and push both
-  docker tag  "${SLUG}:register" "${SLUG}:${TRAVIS_TAG}-register"
+  docker tag  "${SLUG}:register" "${SLUG}:register-${TRAVIS_TAG}"
   docker push "${SLUG}:register"
-  docker push "${SLUG}:${TRAVIS_TAG}-register"
+  docker push "${SLUG}:register-${TRAVIS_TAG}"
 
   # For each architecture, create a versioned tag, and push all
   for guest_arch in ${guest_architectures}; do
-    docker tag  "${SLUG}:${guest_arch}"  "${SLUG}:${TRAVIS_TAG}-${guest_arch}"
+    docker tag  "${SLUG}:${guest_arch}"  "${SLUG}:${guest_arch}-${TRAVIS_TAG}"
 
     docker push "${SLUG}:${guest_arch}"
-    docker push "${SLUG}:${TRAVIS_TAG}-${guest_arch}"
+    docker push "${SLUG}:${guest_arch}-${TRAVIS_TAG}"
   done
 fi
-
-
-
-
