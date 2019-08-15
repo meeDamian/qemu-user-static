@@ -47,5 +47,5 @@ jobs:
         file_glob: true
         file: releases/*.tgz
         on:
-          repo: meeDamian/qemu-user-static
+          repo: ${TRAVIS_REPO_SLUG}
           tags: true
